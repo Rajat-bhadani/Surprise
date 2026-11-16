@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shalu, a surprise for you</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Outfit:wght@300;400;500&display=swap">
+<style>
+:root{--ink:#0b1b2e;--ink2:#12304d;--gold:#f2c14e;--lotus:#f08a9b;--paper:#fbf4e4;--text:#f6efe0;--mute:#9fb3c8;color-scheme:dark;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root:not([data-theme="light"]){--ink:#0b1b2e}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:radial-gradient(120% 80% at 50% 100%,#1d4468 0%,var(--ink) 60%);background-color:var(--ink);color:var(--text);font-family:Outfit,system-ui,sans-serif;font-weight:300;overflow-x:hidden}
+canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:5}
+.lantern{position:fixed;bottom:-60px;width:26px;height:34px;border-radius:40% 40% 45% 45%;background:radial-gradient(circle at 50% 60%,#ffe29a,#f08a3c 70%);box-shadow:0 0 24px 6px rgba(255,170,60,.45);opacity:0;animation:rise linear infinite;z-index:1}
+.lantern::after{content:"";position:absolute;left:50%;top:100%;width:1px;height:10px;background:#f2c14e88}
+@keyframes rise{0%{transform:translateY(0) translateX(0);opacity:0}10%{opacity:.9}100%{transform:translateY(-115vh) translateX(30px);opacity:0}}
+.stage{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;text-align:center}
+#seal{max-width:420px}
+.env{width:min(86vw,340px);aspect-ratio:1.4;margin:0 auto 28px;background:var(--paper);border-radius:6px;position:relative;box-shadow:0 20px 50px rgba(0,0,0,.5);cursor:pointer;border:0;display:block;padding:0}
+.env::before{content:"";position:absolute;inset:0;background:linear-gradient(to bottom right,transparent 49.6%,#0003 50%) ,linear-gradient(to bottom left,transparent 49.6%,#0003 50%);clip-path:polygon(0 0,100% 0,50% 58%);background-color:#efe3c8;border-radius:6px 6px 0 0}
+.env span{position:absolute;left:50%;top:50%;transform:translate(-50%,-10%);width:58px;height:58px;border-radius:50%;background:var(--lotus);color:#fff;font:700 28px/58px "Cormorant Garamond",serif;box-shadow:0 4px 12px #0005;animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{50%{transform:translate(-50%,-10%) scale(1.12)}}
+.env:focus-visible,.btn:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
+h1,h2{font-family:"Cormorant Garamond",serif;font-weight:500;margin:0;line-height:1.05}
+#seal h1{font-size:clamp(34px,9vw,48px)}
+#seal p{color:var(--mute);margin:12px 0 0}
+#reveal{display:none;width:100%;max-width:560px}
+#reveal.on{display:block}
+.big{font-size:clamp(44px,12vw,84px);font-weight:700;color:var(--gold);animation:in 1.2s cubic-bezier(.2,.8,.2,1) both}
+.sub{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:clamp(20px,5vw,28px);margin:12px 0 28px}
+@keyframes in{from{opacity:0;transform:scale(.9) translateY(20px);filter:blur(8px)}}
+.pass{background:var(--paper);color:#14263a;border-radius:18px;text-align:left;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.55)}
+.top{background:#005a85;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;font-weight:400}
+.top b{font-weight:500;letter-spacing:.02em}
+.row{display:flex;justify-content:space-between;align-items:center;padding:22px 20px 8px;gap:8px}
+.city{font:700 clamp(40px,11vw,56px)/1 "Cormorant Garamond",serif}
+.row small{display:block;color:#5b6b7c;font-size:13px;margin-top:6px}
+.mid{flex:1;text-align:center;color:#5b6b7c;font-size:13px}
+.line{height:1px;background:#14263a44;position:relative;margin:8px 4px}
+.line::after{content:"✈";position:absolute;left:50%;top:50%;transform:translate(-50%,-52%);background:var(--paper);padding:0 6px;color:#005a85}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:18px 20px;border-top:2px dashed #14263a33;margin-top:14px}
+.grid div{font-size:13px;color:#5b6b7c}
+.grid strong{display:block;color:#14263a;font-size:16px;font-weight:500;margin-top:2px}
+.cd{display:flex;justify-content:center;gap:12px;margin:30px 0 10px}
+.cd div{min-width:64px;padding:12px 6px;border:1px solid #f2c14e66;border-radius:12px}
+.cd b{display:block;font:700 34px/1 "Cormorant Garamond",serif;color:var(--gold)}
+.cd i{font-style:normal;font-size:12px;color:var(--mute)}
+.msg{max-width:440px;margin:22px auto;font-size:17px;line-height:1.6}
+.btn{background:var(--gold);color:#14263a;border:0;border-radius:999px;padding:12px 24px;font:500 16px Outfit,sans-serif;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.lantern,.env span,.big{animation:none}.lantern{opacity:.6}}
+</style>
+</head>
+<body>
+<canvas id="c" aria-hidden="true"></canvas>
+
+<main class="stage">
+  <section id="seal">
+    <button class="env" id="open" aria-label="Open your surprise"><span>♥</span></button>
+    <h1>Shalu, this one is for you.</h1>
+    <p>Tap the envelope</p>
+  </section>
+
+  <section id="reveal" aria-live="polite">
+    <h2 class="big">Surprise! We’re going to Vietnam!</h2>
+    <p class="sub">We’re ringing in the New Year in Da Nang, Vietnam.</p>
+
+    <div class="pass">
+      <div class="top"><b>Vietnam Airlines · Economy</b><span>PNR 8QHHV3</span></div>
+      <div class="row">
+        <div><div class="city">DEL</div><small>New Delhi, Terminal 3<br>Thu, 31 Dec · 23:30</small></div>
+        <div class="mid"><div class="line"></div>10h 40m<br>1 stop via Hanoi</div>
+        <div style="text-align:right"><div class="city">DAD</div><small>Da Nang, Terminal 1<br>Fri, 1 Jan · 11:40</small></div>
+      </div>
+      <div class="grid">
+        <div>Flights<strong>VN-980, VN-159</strong></div>
+        <div>Fare<strong>Standard</strong></div>
+        <div>Traveller<strong>Rajat Kumar Bhadani</strong></div>
+        <div>Traveller<strong>Shalu Kumari</strong></div>
+      </div>
+    </div>
+
+    <div class="cd" role="timer" aria-label="Time until departure">
+      <div><b id="d">0</b><i>days</i></div><div><b id="h">0</b><i>hours</i></div><div><b id="m">0</b><i>min</i></div><div><b id="s">0</b><i>sec</i></div>
+    </div>
+    <p class="sub" style="margin:0">until take-off</p>
+
+    <p class="msg" id="msg">Two seats, one lantern-lit city, and the whole of next year ahead of us. I wanted to start it with you. Happy New Year, Shalu.</p>
+    <button class="btn" id="again">Celebrate again</button>
+  </section>
+</main>
+
+<script>
+(function(){
+  var cv=document.getElementById('c'),cx=cv.getContext('2d'),P=[],run=false;
+  function size(){cv.width=innerWidth;cv.height=innerHeight}
+  size();addEventListener('resize',size);
+  var cols=['#f2c14e','#f08a9b','#ffffff','#5ec2e6','#ffb36b'];
+  function burst(n){
+    for(var i=0;i<n;i++)P.push({x:innerWidth/2,y:innerHeight*.4,vx:(Math.random()-.5)*16,vy:Math.random()*-14-3,r:Math.random()*5+3,c:cols[i%cols.length],a:1,rot:Math.random()*6});
+    if(!run){run=true;tick()}
+  }
+  function tick(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    P=P.filter(function(p){return p.a>0.02});
+    P.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.28;p.vx*=.99;p.a-=.008;p.rot+=.2;
+      cx.globalAlpha=p.a;cx.fillStyle=p.c;cx.save();cx.translate(p.x,p.y);cx.rotate(p.rot);cx.fillRect(-p.r,-p.r/2,p.r*2,p.r);cx.restore()});
+    if(P.length)requestAnimationFrame(tick);else run=false;
+  }
+  for(var i=0;i<14;i++){
+    var l=document.createElement('div');l.className='lantern';
+    l.style.left=(Math.random()*96)+'%';l.style.animationDuration=(9+Math.random()*9)+'s';l.style.animationDelay=(-Math.random()*14)+'s';
+    l.style.transform='scale('+(.6+Math.random()*.8)+')';document.body.appendChild(l);
+  }
+  var target=new Date('2026-12-31T23:30:00+05:30').getTime();
+  function count(){
+    var t=Math.max(0,target-Date.now()),
+    s=Math.floor(t/1000);
+    document.getElementById('d').textContent=Math.floor(s/86400);
+    document.getElementById('h').textContent=Math.floor(s%86400/3600);
+    document.getElementById('m').textContent=Math.floor(s%3600/60);
+    document.getElementById('s').textContent=s%60;
+  }
+  count();setInterval(count,1000);
+  document.getElementById('open').addEventListener('click',function(){
+    document.getElementById('seal').style.display='none';
+    document.getElementById('reveal').classList.add('on');
+    burst(160);setTimeout(function(){burst(100)},700);
+  });
+  document.getElementById('again').addEventListener('click',function(){burst(180)});
+})();
+</script>
+</body>
+</html>
